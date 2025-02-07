@@ -1,3 +1,9 @@
+"""
+import matplotlib
+matplotlib.use('TkAgg')
+"""
+
+
 import matplotlib.pyplot as plt
 import numpy as np
 from datasets import gaussians_dataset
@@ -15,8 +21,8 @@ def main_adaboost():
     Main function for testing Adaboost.
     """
 
-    X_train, Y_train, X_test, Y_test = gaussians_dataset(2, [300, 400], [[1, 3], [-4, 8]], [[2, 3], [4, 1]])
-    # X_train, Y_train, X_test, Y_test = h_shaped_dataset()
+    # X_train, Y_train, X_test, Y_test = gaussians_dataset(2, [300, 400], [[1, 3], [-4, 8]], [[2, 3], [4, 1]])
+    X_train, Y_train, X_test, Y_test = h_shaped_dataset()
     # X_train, Y_train, X_test, Y_test = two_moon_dataset(n_samples=500, noise=0.2)
 
     # visualize dataset
@@ -25,7 +31,7 @@ def main_adaboost():
     # train model and predict
     model = AdaBoostClassifier(n_learners=100)
 
-    model.fit(X_train, Y_train, verbose=True)
+    model.fit(X_train, Y_train, verbose=False)
     P = model.predict(X_test)
 
     # visualize the boundary!
