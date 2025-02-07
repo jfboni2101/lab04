@@ -37,7 +37,7 @@ def plot_2d_dataset(X, Y, title=''):
     # plot points
     plt.scatter(X[:, 0], X[:, 1], c=Y, zorder=10, s=40, cmap=cmap, edgecolors='k')
     plt.title(title)
-    plt.waitforbuttonpress()
+    # plt.waitforbuttonpress()
 
 
 def plot_boundary(X, Y, model, title=''):
@@ -85,4 +85,4 @@ def plot_boundary(X, Y, model, title=''):
     ax[0].set_title('Data')
     ax[1].set_title('Boundary')
 
-    plt.waitforbuttonpress()
+    # plt.waitforbuttonpress()

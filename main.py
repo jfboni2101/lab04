@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from datasets import gaussians_dataset
+from datasets import two_moon_dataset
+from datasets import h_shaped_dataset
 from utils import plot_2d_dataset
 from utils import plot_boundary
 

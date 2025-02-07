@@ -21,16 +21,16 @@ class WeakClassifier:
         possible_labels = np.unique(Y)
 
         """ pick a random feature (see np.random.choice) """
-        self._dim = ... #TODO!
+        self._dim = np.random.choice(d)
 
         """ pick a random threshold (see np.random.uniform)
             NB: look at the interval [min,max] from the selected dimension """
-        self._threshold = ... #TODO!
+        self._threshold = np.random.uniform(np.min(X[:,self._dim]), np.max(X[:,self._dim]))
 
         """ pick a random verse (see np.random.choice)
             case a) feature >= _threshold ==>> then predict 1
             case b) feature >= _threshold ==>> then predict -1 """
-        self._label_above_split = ... #TODO!
+        self._label_above_split = np.random.choice(possible_labels)
 
     def predict(self, X: np.ndarray):
 
@@ -38,8 +38,8 @@ class WeakClassifier:
 
         """ fill y_pred with the predictions """
         y_pred = np.zeros(shape=num_samples)
-
-        return y_pred #TODO!
+        y_pred[X[:,self._dim] >= self._threshold] = self._label_above_split
+        return y_pred
 
 
 class AdaBoostClassifier:
@@ -87,20 +87,20 @@ class AdaBoostClassifier:
         assert possible_labels.size == 2, 'Error: data is not binary'
 
         """ initialize the sample weights as equally probable """
-        sample_weights = ... #TODO!
+        sample_weights = np.ones(n) / n
 
         for l in range(self.n_learners):
 
             """ choose the indexes of 'difficult' samples. See np.random.choice
                 https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.random.choice.html
                 Pay attention to p, which indicates the probabilities that will be used during sampling."""
-            cur_idx = ... #TODO!
+            cur_idx = np.random.choice(n, size=n, replace=True, p=sample_weights)
 
             # extract 'difficult' samples
             cur_X = X[cur_idx]
             cur_Y = Y[cur_idx]
 
-              # search for a weak classifier
+            # search for a weak classifier
             error = 1
             n_trials = 0
             cur_wclass = None
@@ -112,15 +112,14 @@ class AdaBoostClassifier:
                 cur_wclass = WeakClassifier()
 
                 """ train the weak classifier on the dataset subsample """
-                #TODO!
-                pass
+                cur_wclass.fit(cur_X, cur_Y)
 
                 """ compute the predictions on the dataset subsample """
-                y_pred = ... #TODO!
+                y_pred = cur_wclass.predict(cur_X)
 
                 """ according to the predicitons and labels, compute the error
                     made by the current classifier (namely, cur_wclass) """
-                error = ... #TODO!
+                error = np.sum(sample_weights[cur_idx]*(y_pred != cur_Y) / np.sum(sample_weights[cur_idx]))
 
                 n_trials += 1
                 if n_trials > self.n_max_trials:
@@ -137,11 +136,13 @@ class AdaBoostClassifier:
             self.learners.append(cur_wclass)
 
             """ based on the right and wrong predictions, update sample_weights"""
-            sample_weights = ... #TODO!
-
+            sample_weights[cur_idx] *= np.exp(-alpha * cur_Y * y_pred)
+            sample_weights /= np.sum(sample_weights)
+            """
             if verbose:
                 self._plot(cur_X, y_pred, sample_weights[cur_idx],
                            self.learners[-1], l)
+            """
 
 
     def predict(self, X: np.ndarray):
@@ -162,9 +163,10 @@ class AdaBoostClassifier:
         num_samples = X.shape[0]
 
         """ fill y_pred with the predictions """
-        y_pred = ...
-
-        return y_pred
+        y_pred = np.zeros(num_samples)
+        for alpha, learner in zip(self.alphas, self.learners):
+            y_pred += alpha * learner.predict(X)
+        return np.sign(y_pred)
 
 
     def _plot(self, X: np.ndarray, y_pred: np.ndarray, weights: np.ndarray,
