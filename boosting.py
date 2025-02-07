@@ -138,11 +138,11 @@ class AdaBoostClassifier:
             """ based on the right and wrong predictions, update sample_weights"""
             sample_weights[cur_idx] *= np.exp(-alpha * cur_Y * y_pred)
             sample_weights /= np.sum(sample_weights)
-            """
+
             if verbose:
                 self._plot(cur_X, y_pred, sample_weights[cur_idx],
                            self.learners[-1], l)
-            """
+
 
 
     def predict(self, X: np.ndarray):
